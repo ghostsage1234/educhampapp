@@ -32,7 +32,8 @@ export function getQuestions(className, subject, examType) {
   }
 }
 
-export function shuffleQuestions(questions, max = 20) {
+export function shuffleQuestions(questions, max = null) {
   const shuffled = [...questions].sort(() => Math.random() - 0.5);
-  return shuffled.slice(0, Math.min(max, shuffled.length));
+  if (max) return shuffled.slice(0, Math.min(max, shuffled.length));
+  return shuffled;
 }

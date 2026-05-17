@@ -33,7 +33,7 @@ export default function QuizScreen() {
     const info = `class:"${cn}" sub:"${sub}" exam:"${exam}" found:${raw ? raw.length : 0}`;
     setDebugInfo(info);
     if (raw && raw.length > 0) {
-      setQuestions(shuffleQuestions(raw, 20));
+      setQuestions(shuffleQuestions(raw));
     } else {
       setQuestions([
         { q: `No questions found!\n${info}`, o: ["OK", "Back", "Try again", "Exit"], a: "OK", e: "Check selection." }
