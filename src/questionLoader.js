@@ -51,3 +51,16 @@ export function getEssayQuestions(subject, year) {
 }
 
 const ALL_ESSAYS = {};
+
+export function getBeceQuestions(subject, year) {
+  try {
+    const { BECE_QUESTIONS } from './beceQuestions';
+    return BECE_QUESTIONS?.[subject]?.[year] || null;
+  } catch(e) {
+    return null;
+  }
+}
+
+export function getEssayQuestions(subject, year) {
+  return null;
+}
