@@ -17,6 +17,7 @@ export default function QuizScreen() {
   const [timeLeft, setTimeLeft] = useState(30);
   const [questions, setQuestions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [debugInfo, setDebugInfo] = useState('');
   const timerRef = useRef<any>(null);
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const progressAnim = useRef(new Animated.Value(0)).current;
@@ -25,12 +26,17 @@ export default function QuizScreen() {
   const timeLimit = isAdvanced ? 45 : 30;
 
   useEffect(() => {
-    const raw = getQuestions(className as string, subject as string, examType as string);
+    const cn = className as string;
+    const sub = subject as string;
+    const exam = examType as string;
+    const raw = getQuestions(cn, sub, exam);
+    const info = `class:"${cn}" sub:"${sub}" exam:"${exam}" found:${raw ? raw.length : 0}`;
+    setDebugInfo(info);
     if (raw && raw.length > 0) {
       setQuestions(shuffleQuestions(raw, 20));
     } else {
       setQuestions([
-        { q: "No questions found for this selection.", o: ["OK", "Back", "Try again", "Exit"], a: "OK", e: "Please check your selection." }
+        { q: `No questions found!\n${info}`, o: ["OK", "Back", "Try again", "Exit"], a: "OK", e: "Check selection." }
       ]);
     }
     setLoading(false);
@@ -123,8 +129,8 @@ export default function QuizScreen() {
         <Animated.View style={{ opacity: fadeAnim }}>
           <Text style={styles.subject}>{subject} • {examType}</Text>
           <Text style={styles.question}>{q.q}</Text>
-          {q.o.map((opt: string) => (
-            <TouchableOpacity key={opt} style={getOptionStyle(opt)} onPress={() => handleAnswer(opt)} disabled={answered} activeOpacity={0.8}>
+          {q.o.map((opt: string, idx: number) => (
+            <TouchableOpacity key={idx} style={getOptionStyle(opt)} onPress={() => handleAnswer(opt)} disabled={answered} activeOpacity={0.8}>
               <Text style={styles.optionText}>{opt}</Text>
               {answered && opt === q.a && <Text style={styles.tick}>✓</Text>}
               {answered && opt === selected && opt !== q.a && <Text style={styles.cross}>✗</Text>}
