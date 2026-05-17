@@ -37,3 +37,17 @@ export function shuffleQuestions(questions, max = null) {
   if (max) return shuffled.slice(0, Math.min(max, shuffled.length));
   return shuffled;
 }
+
+export function getEssayQuestions(subject, year) {
+  try {
+    const allEssays = ALL_ESSAYS;
+    if (!allEssays) return null;
+    const subjectData = allEssays[subject];
+    if (!subjectData) return null;
+    return subjectData[year] || null;
+  } catch (e) {
+    return null;
+  }
+}
+
+const ALL_ESSAYS = {};

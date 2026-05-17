@@ -16,6 +16,9 @@ export default function RootLayout() {
         <Stack.Screen name="quiz" />
         <Stack.Screen name="results" />
         <Stack.Screen name="leaderboard" />
+        <Stack.Screen name="becesubject" />
+        <Stack.Screen name="beceyear" />
+        <Stack.Screen name="beceessay" />
       </Stack>
     </>
   );

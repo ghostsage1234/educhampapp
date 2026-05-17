@@ -25,12 +25,21 @@ export default function ClassScreen() {
           {classes.map((cls) => (
             <TouchableOpacity
               key={cls}
-              style={styles.card}
-              onPress={() => router.push({ pathname: '/subject', params: { level, className: cls } })}
+              style={[styles.card, cls === 'JHS 3' && styles.beceCard]}
+              onPress={() => {
+                if (cls === 'JHS 3') {
+                  router.push({ pathname: '/becesubject', params: { level, className: cls } });
+                } else {
+                  router.push({ pathname: '/subject', params: { level, className: cls } });
+                }
+              }}
               activeOpacity={0.8}
             >
-              <Text style={styles.cardEmoji}>📖</Text>
-              <Text style={styles.cardTitle}>{cls}</Text>
+              <Text style={styles.cardEmoji}>{cls === 'JHS 3' ? '🎓' : '📖'}</Text>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.cardTitle}>{cls}</Text>
+                {cls === 'JHS 3' && <Text style={styles.beceLabel}>BECE Preparation</Text>}
+              </View>
               <Text style={styles.arrow}>›</Text>
             </TouchableOpacity>
           ))}
@@ -50,8 +59,10 @@ const styles = StyleSheet.create({
   title: { fontSize: 28, fontWeight: '900', color: '#fff', marginBottom: 4 },
   subtitle: { fontSize: 15, color: '#c4b5fd', marginBottom: 28 },
   card: { width: '100%', backgroundColor: 'rgba(255,255,255,0.07)', borderRadius: 16, padding: 20, flexDirection: 'row', alignItems: 'center', marginBottom: 14, borderWidth: 1, borderColor: 'rgba(124,58,237,0.4)' },
+  beceCard: { borderColor: '#ffd700', backgroundColor: 'rgba(255,215,0,0.08)' },
   cardEmoji: { fontSize: 28, marginRight: 16 },
-  cardTitle: { fontSize: 20, fontWeight: '700', color: '#fff', flex: 1 },
+  cardTitle: { fontSize: 20, fontWeight: '700', color: '#fff' },
+  beceLabel: { fontSize: 12, color: '#ffd700', fontWeight: '700', marginTop: 2 },
   arrow: { fontSize: 28, color: '#7c3aed' },
   back: { alignItems: 'center', marginTop: 10, marginBottom: 30 },
   backText: { color: '#a78bfa', fontSize: 16 },
