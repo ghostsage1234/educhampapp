@@ -7,16 +7,15 @@ export default function BeceViewScreen() {
   const router = useRouter();
   const { subject, year, subjectColor, type } = useLocalSearchParams();
   const color = (subjectColor as string) || '#ffd700';
-  const [revealedAnswers, setRevealedAnswers] = useState<{[key:number]: boolean}>({});
+  const [revealedAnswers, setRevealedAnswers] = useState<{[key:string]: boolean}>({});
   const [showAll, setShowAll] = useState(false);
 
   const questions = getBeceQuestions(subject as string, year as string, type as string);
-
-  const toggleAnswer = (idx: number) => {
-    setRevealedAnswers(prev => ({ ...prev, [idx]: !prev[idx] }));
-  };
-
   const isObjectives = type === 'objectives';
+
+  const toggleAnswer = (key: string) => {
+    setRevealedAnswers(prev => ({ ...prev, [key]: !prev[key] }));
+  };
 
   return (
     <View style={styles.container}>
@@ -35,21 +34,17 @@ export default function BeceViewScreen() {
           <Text style={[styles.subtitle, { color }]}>BECE {year} • {subject}</Text>
           <View style={styles.noticeBox}>
             <Text style={styles.noticeText}>
-              {isObjectives
-                ? '📖 Read each question and tap "Show Answer" to reveal the correct answer and explanation.'
-                : '📖 Read each question carefully and write your answers in your exercise book.'}
+              📖 Read each question carefully and tap Show Answer to reveal the correct answer.
             </Text>
           </View>
-          {isObjectives && (
-            <TouchableOpacity
-              style={styles.showAllBtn}
-              onPress={() => setShowAll(!showAll)}
-            >
-              <Text style={styles.showAllText}>
-                {showAll ? '🙈 Hide All Answers' : '👁️ Show All Answers'}
-              </Text>
-            </TouchableOpacity>
-          )}
+          <TouchableOpacity
+            style={styles.showAllBtn}
+            onPress={() => setShowAll(!showAll)}
+          >
+            <Text style={styles.showAllText}>
+              {showAll ? '🙈 Hide All Answers' : '👁️ Show All Answers'}
+            </Text>
+          </TouchableOpacity>
         </View>
 
         {!questions || questions.length === 0 ? (
@@ -61,48 +56,48 @@ export default function BeceViewScreen() {
           questions.map((q: any, idx: number) => (
             <View key={idx} style={styles.questionBox}>
               <Text style={[styles.questionNum, { color }]}>Question {idx + 1}</Text>
-              <Text style={styles.questionText}>{q.q}</Text>
               {q.image && (
                 <View style={styles.imagePlaceholder}>
                   <Text style={styles.imageText}>📊 [Diagram - See textbook]</Text>
                 </View>
               )}
+              <Text style={styles.questionText}>{q.q}</Text>
               <View style={styles.optionsBox}>
                 {q.o.map((opt: string, oIdx: number) => (
                   <View key={oIdx} style={[
                     styles.optionRow,
-                    (showAll || revealedAnswers[idx]) && opt === q.a && styles.correctOption
+                    (showAll || revealedAnswers[`obj_${idx}`]) && opt === q.a && styles.correctOption
                   ]}>
                     <Text style={[
                       styles.optionLabel,
-                      (showAll || revealedAnswers[idx]) && opt === q.a && styles.correctText
+                      (showAll || revealedAnswers[`obj_${idx}`]) && opt === q.a && styles.correctText
                     ]}>
                       {String.fromCharCode(65 + oIdx)}.
                     </Text>
                     <Text style={[
                       styles.optionText,
-                      (showAll || revealedAnswers[idx]) && opt === q.a && styles.correctText
+                      (showAll || revealedAnswers[`obj_${idx}`]) && opt === q.a && styles.correctText
                     ]}>
                       {opt}
                     </Text>
-                    {(showAll || revealedAnswers[idx]) && opt === q.a && (
+                    {(showAll || revealedAnswers[`obj_${idx}`]) && opt === q.a && (
                       <Text style={styles.tick}>✓</Text>
                     )}
                   </View>
                 ))}
               </View>
-              {(showAll || revealedAnswers[idx]) && q.e && (
+              {(showAll || revealedAnswers[`obj_${idx}`]) && q.e && (
                 <View style={styles.expBox}>
                   <Text style={styles.expText}>💡 {q.e}</Text>
                 </View>
               )}
               {!showAll && (
                 <TouchableOpacity
-                  style={[styles.revealBtn, revealedAnswers[idx] && styles.hideBtn]}
-                  onPress={() => toggleAnswer(idx)}
+                  style={[styles.revealBtn, revealedAnswers[`obj_${idx}`] && styles.hideBtn]}
+                  onPress={() => toggleAnswer(`obj_${idx}`)}
                 >
                   <Text style={styles.revealText}>
-                    {revealedAnswers[idx] ? '🙈 Hide Answer' : '👁️ Show Answer'}
+                    {revealedAnswers[`obj_${idx}`] ? '🙈 Hide Answer' : '👁️ Show Answer'}
                   </Text>
                 </TouchableOpacity>
               )}
@@ -120,12 +115,12 @@ export default function BeceViewScreen() {
                   <Text style={[styles.questionNum, { color }]}>
                     Question {q.number} {q.marks && `[${q.marks}]`}
                   </Text>
-                  <Text style={styles.questionText}>{q.question}</Text>
                   {q.image && (
                     <View style={styles.imagePlaceholder}>
                       <Text style={styles.imageText}>📊 [Diagram - See textbook]</Text>
                     </View>
                   )}
+                  <Text style={styles.questionText}>{q.question}</Text>
                   {q.parts && q.parts.map((part: any, pIdx: number) => (
                     <View key={pIdx} style={styles.partBox}>
                       <Text style={styles.partText}>
@@ -140,6 +135,26 @@ export default function BeceViewScreen() {
                       ))}
                     </View>
                   ))}
+                  {q.answer && (
+                    <>
+                      {(showAll || revealedAnswers[`essay_${sIdx}_${qIdx}`]) && (
+                        <View style={styles.answerBox}>
+                          <Text style={styles.answerTitle}>📋 Model Answer:</Text>
+                          <Text style={styles.answerText}>{q.answer}</Text>
+                        </View>
+                      )}
+                      {!showAll && (
+                        <TouchableOpacity
+                          style={[styles.revealBtn, revealedAnswers[`essay_${sIdx}_${qIdx}`] && styles.hideBtn]}
+                          onPress={() => toggleAnswer(`essay_${sIdx}_${qIdx}`)}
+                        >
+                          <Text style={styles.revealText}>
+                            {revealedAnswers[`essay_${sIdx}_${qIdx}`] ? '🙈 Hide Answer' : '👁️ Show Model Answer'}
+                          </Text>
+                        </TouchableOpacity>
+                      )}
+                    </>
+                  )}
                 </View>
               ))}
             </View>
@@ -162,7 +177,7 @@ const styles = StyleSheet.create({
   titleEmoji: { fontSize: 48, marginBottom: 8 },
   title: { fontSize: 26, fontWeight: '900', color: '#fff', marginBottom: 4 },
   subtitle: { fontSize: 14, marginBottom: 12 },
-  noticeBox: { backgroundColor: 'rgba(255,215,0,0.1)', borderRadius: 12, padding: 12, borderWidth: 1, borderColor: 'rgba(255,215,0,0.3)', marginBottom: 12 },
+  noticeBox: { backgroundColor: 'rgba(255,215,0,0.1)', borderRadius: 12, padding: 12, borderWidth: 1, borderColor: 'rgba(255,215,0,0.3)', marginBottom: 12, width: '100%' },
   noticeText: { color: '#ffd700', fontSize: 13, lineHeight: 20, textAlign: 'center' },
   showAllBtn: { backgroundColor: 'rgba(124,58,237,0.3)', borderRadius: 10, paddingVertical: 10, paddingHorizontal: 20, borderWidth: 1, borderColor: '#7c3aed' },
   showAllText: { color: '#fff', fontSize: 14, fontWeight: '700' },
@@ -180,6 +195,9 @@ const styles = StyleSheet.create({
   tick: { color: '#10b981', fontSize: 16, fontWeight: '900' },
   expBox: { backgroundColor: 'rgba(124,58,237,0.15)', borderRadius: 8, padding: 10, marginTop: 8, borderWidth: 1, borderColor: 'rgba(124,58,237,0.3)' },
   expText: { color: '#c4b5fd', fontSize: 13, lineHeight: 20 },
+  answerBox: { backgroundColor: 'rgba(16,185,129,0.1)', borderRadius: 8, padding: 12, marginTop: 8, borderWidth: 1, borderColor: 'rgba(16,185,129,0.3)' },
+  answerTitle: { color: '#10b981', fontSize: 13, fontWeight: '800', marginBottom: 6 },
+  answerText: { color: '#e2e8f0', fontSize: 14, lineHeight: 22 },
   revealBtn: { backgroundColor: 'rgba(124,58,237,0.3)', borderRadius: 10, paddingVertical: 10, alignItems: 'center', marginTop: 8, borderWidth: 1, borderColor: '#7c3aed' },
   hideBtn: { backgroundColor: 'rgba(239,68,68,0.2)', borderColor: '#ef4444' },
   revealText: { color: '#fff', fontSize: 14, fontWeight: '700' },

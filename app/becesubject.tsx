@@ -31,7 +31,7 @@ export default function BeceSubjectScreen() {
         <Text style={styles.title}>BECE Prep</Text>
         <Text style={styles.subtitle}>JHS 3 • Select Subject</Text>
         <View style={styles.warningBox}>
-          <Text style={styles.warningText}>⚠️ This section contains BECE past questions (2021-2025). Objectives are timed. Essay questions are for practice in your book.</Text>
+          <Text style={styles.warningText}>🎓 This section contains BECE past questions (2021-2025). Study each question and reveal the answers to check your understanding.</Text>
         </View>
         <ScrollView style={{ width: '100%' }} showsVerticalScrollIndicator={false}>
           {BECE_SUBJECTS.map((sub) => (
