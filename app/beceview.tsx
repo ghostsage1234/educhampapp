@@ -35,17 +35,19 @@ export default function BeceViewScreen() {
           <Text style={[styles.subtitle, { color }]}>BECE {year} • {subject}</Text>
           <View style={styles.noticeBox}>
             <Text style={styles.noticeText}>
-              📖 View the question paper below and answer in your book.
+              {images && images.length > 0 ? '📖 View the question paper below and answer in your book.' : '📖 Read each question carefully and tap Show Answer to reveal the correct answer.'}
             </Text>
           </View>
-          <TouchableOpacity
-            style={styles.showAllBtn}
-            onPress={() => setShowAll(!showAll)}
-          >
-            <Text style={styles.showAllText}>
-              {showAll ? '🙈 Hide All Answers' : '👁️ Show All Answers'}
-            </Text>
-          </TouchableOpacity>
+          {(!images || images.length === 0) && (
+            <TouchableOpacity
+              style={styles.showAllBtn}
+              onPress={() => setShowAll(!showAll)}
+            >
+              <Text style={styles.showAllText}>
+                {showAll ? '🙈 Hide All Answers' : '👁️ Show All Answers'}
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
 
         {!questions || questions.length === 0 ? (
