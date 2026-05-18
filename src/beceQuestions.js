@@ -1,30 +1,13 @@
 export const BECE_QUESTIONS = {
   "Mathematics": {
     "2021": {
-      objectiveImages: [
-        require("../assets/bece/math_p1.png"),
-        require("../assets/bece/math_p2.png"),
-        require("../assets/bece/math_p3.png"),
-      ],
-      essayImages: [
-        require("../assets/bece/math_p4.png"),
-        require("../assets/bece/math_p5.png"),
-      ],
+      objectiveImages: [],
+      essayImages: [],
       objectives: [],
       essays: [],
     },
     "2022": {
-      images: [
-        require('../assets/bece/math_p4.png'),
-        require('../assets/bece/math_p5.png'),
-        require('../assets/bece/math_p6.png'),
-        require('../assets/bece/math_p7.png'),
-        require('../assets/bece/math_p8.png'),
-        require('../assets/bece/math_p9.png'),
-        require('../assets/bece/math_p10.png'),
-        require('../assets/bece/math_p11.png'),
-        require('../assets/bece/math_p12.png'),
-      ],
+      images: [],
       answers: [
         {n:1, a:"B", e:"1930.54 = 1.93054×10³"},
         {n:2, a:"B", e:"3^x=81=3^4, so x=4"},
@@ -69,13 +52,7 @@ export const BECE_QUESTIONS = {
       ]
     },
     "2023": {
-      images: [
-        require('../assets/bece/math_p13.png'),
-        require('../assets/bece/math_p14.png'),
-        require('../assets/bece/math_p15.png'),
-        require('../assets/bece/math_p16.png'),
-        require('../assets/bece/math_p17.png'),
-      ],
+      images: [],
       answers: [
         {n:1, a:"C", e:"0.01723 = 1.723×10⁻²"},
         {n:2, a:"A", e:"3(-3)²+2(-3)-7 = 27-6-7 = -40... wait: 3(9)+2(-3)-7=27-6-7=14. Answer C"},
@@ -120,17 +97,7 @@ export const BECE_QUESTIONS = {
       ]
     },
     "2024": {
-      images: [
-        require('../assets/bece/math_p18.png'),
-        require('../assets/bece/math_p19.png'),
-        require('../assets/bece/math_p20.png'),
-        require('../assets/bece/math_p21.png'),
-        require('../assets/bece/math_p22.png'),
-        require('../assets/bece/math_p23.png'),
-        require('../assets/bece/math_p24.png'),
-        require('../assets/bece/math_p25.png'),
-        require('../assets/bece/math_p26.png'),
-      ],
+      images: [],
       answers: [
         {n:1, a:"A", e:"5×3000=15000, 20000-15000=GHC 5,000 saved"},
         {n:2, a:"B", e:"Ratio 2:5, difference=3 parts=150. Total=7parts=GHC 350"},
@@ -175,13 +142,7 @@ export const BECE_QUESTIONS = {
       ]
     },
     "2025": {
-      images: [
-        require('../assets/bece/math_p27.png'),
-        require('../assets/bece/math_p28.png'),
-        require('../assets/bece/math_p29.png'),
-        require('../assets/bece/math_p30.png'),
-        require('../assets/bece/math_p31.png'),
-      ],
+      images: [],
       answers: [
         {n:1, a:"C", e:"SI=PRT/100=550×12×t/100=132, t=2 years"},
         {n:2, a:"B", e:"(2(3a+1)-3(4a-3)) = 6a+2-12a+9 = 11-6a"},
