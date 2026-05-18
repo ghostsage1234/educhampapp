@@ -13,7 +13,8 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/images/android-icon-foreground.png",
+        "monochromeImage": "./assets/images/android-icon-monochrome.png",
         "backgroundColor": "#0a0820"
       },
       "package": "com.educhampgh.app"
@@ -45,6 +46,12 @@
       "image": "./assets/images/splash-icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#0a0820"
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "c3039a96-ed53-41ef-a9d2-e263ec6a7b76"
+      }
     }
   }
 }
