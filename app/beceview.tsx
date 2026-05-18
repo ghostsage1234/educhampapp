@@ -1,7 +1,7 @@
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Image } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
-import { getBeceQuestions } from '../src/questionLoader';
+import { getBeceQuestions, getBeceImages } from '../src/questionLoader';
 
 export default function BeceViewScreen() {
   const router = useRouter();
@@ -11,6 +11,7 @@ export default function BeceViewScreen() {
   const [showAll, setShowAll] = useState(false);
 
   const questions = getBeceQuestions(subject as string, year as string, type as string);
+  const images = getBeceImages(subject as string, year as string);
   const isObjectives = type === 'objectives';
 
   const toggleAnswer = (key: string) => {
@@ -48,9 +49,16 @@ export default function BeceViewScreen() {
         </View>
 
         {!questions || questions.length === 0 ? (
-          <View style={styles.empty}>
-            <Text style={styles.emptyEmoji}>📭</Text>
-            <Text style={styles.emptyText}>Questions for {subject} {year} coming soon!</Text>
+          <View style={styles.imageContainer}>
+            {images && images.map((img: any, i: number) => (
+              <Image key={i} source={img} style={styles.paperImage} resizeMode="contain" />
+            ))}
+            {(!images || images.length === 0) && (
+              <View style={styles.empty}>
+                <Text style={styles.emptyEmoji}>📭</Text>
+                <Text style={styles.emptyText}>Questions for {subject} {year} coming soon!</Text>
+              </View>
+            )}
           </View>
         ) : isObjectives ? (
           questions.map((q: any, idx: number) => (
@@ -209,6 +217,8 @@ const styles = StyleSheet.create({
   marks: { color: '#a78bfa', fontSize: 13 },
   subpartText: { color: '#cbd5e1', fontSize: 13, lineHeight: 20, marginLeft: 16, marginTop: 4 },
   empty: { alignItems: 'center', marginTop: 60 },
+  imageContainer: { width: '100%' },
+  paperImage: { width: '100%', height: 1000, marginBottom: 16 },
   emptyEmoji: { fontSize: 56, marginBottom: 16 },
   emptyText: { color: '#a78bfa', fontSize: 16, textAlign: 'center' },
 });
