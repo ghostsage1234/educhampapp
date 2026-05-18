@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getQuestions, shuffleQuestions } from '../src/questionLoader';
 import { playCorrect, playWrong, playWin } from '../src/sounds';
+import { playCorrect, playWrong, playWin } from '../src/sounds';
 
 export default function QuizScreen() {
   const router = useRouter();

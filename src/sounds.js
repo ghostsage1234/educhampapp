@@ -1,40 +1,26 @@
 import { Audio } from 'expo-av';
 
-export async function playCorrect() {
+async function playSound(require_path) {
   try {
     await Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
-    const { sound } = await Audio.Sound.createAsync(
-      { uri: 'https://www.soundjay.com/buttons/sounds/button-09.mp3' },
-      { shouldPlay: true, volume: 1.0 }
-    );
-    sound.setOnPlaybackStatusUpdate((status) => {
-      if (status.didJustFinish) sound.unloadAsync();
+    const { sound } = await Audio.Sound.createAsync(require_path, { shouldPlay: true });
+    sound.setOnPlaybackStatusUpdate((s) => {
+      if (s.didJustFinish) sound.unloadAsync();
     });
   } catch (e) {}
+}
+
+export async function playCorrect() {
+  await playSound(require('../assets/sounds/correct.wav'));
+  setTimeout(() => playSound(require('../assets/sounds/correct2.wav')), 160);
 }
 
 export async function playWrong() {
-  try {
-    await Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
-    const { sound } = await Audio.Sound.createAsync(
-      { uri: 'https://www.soundjay.com/buttons/sounds/button-10.mp3' },
-      { shouldPlay: true, volume: 1.0 }
-    );
-    sound.setOnPlaybackStatusUpdate((status) => {
-      if (status.didJustFinish) sound.unloadAsync();
-    });
-  } catch (e) {}
+  await playSound(require('../assets/sounds/wrong.wav'));
 }
 
 export async function playWin() {
-  try {
-    await Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
-    const { sound } = await Audio.Sound.createAsync(
-      { uri: 'https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3' },
-      { shouldPlay: true, volume: 1.0 }
-    );
-    sound.setOnPlaybackStatusUpdate((status) => {
-      if (status.didJustFinish) sound.unloadAsync();
-    });
-  } catch (e) {}
+  await playSound(require('../assets/sounds/win.wav'));
+  setTimeout(() => playSound(require('../assets/sounds/win2.wav')), 200);
+  setTimeout(() => playSound(require('../assets/sounds/win3.wav')), 400);
 }
