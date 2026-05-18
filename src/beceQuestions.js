@@ -1,10 +1,14 @@
 export const BECE_QUESTIONS = {
   "Mathematics": {
     "2021": {
-      images: [
+      objectiveImages: [
         require("../assets/bece/math_p1.png"),
         require("../assets/bece/math_p2.png"),
         require("../assets/bece/math_p3.png"),
+      ],
+      essayImages: [
+        require("../assets/bece/math_p4.png"),
+        require("../assets/bece/math_p5.png"),
       ],
       objectives: [],
       essays: [],

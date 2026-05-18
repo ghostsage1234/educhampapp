@@ -11,7 +11,7 @@ export default function BeceViewScreen() {
   const [showAll, setShowAll] = useState(false);
 
   const questions = getBeceQuestions(subject as string, year as string, type as string);
-  const images = getBeceImages(subject as string, year as string);
+  const images = getBeceImages(subject as string, year as string, type as string);
   const isObjectives = type === 'objectives';
 
   const toggleAnswer = (key: string) => {

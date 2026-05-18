@@ -39,13 +39,15 @@ export function shuffleQuestions(questions, max = null) {
   return shuffled;
 }
 
-export function getBeceImages(subject, year) {
+export function getBeceImages(subject, year, type) {
   try {
     const data = BECE_QUESTIONS[subject];
     if (!data) return null;
     const yearData = data[year];
     if (!yearData) return null;
-    return yearData.images || null;
+    if (type === 'objectives') return yearData.objectiveImages || null;
+    if (type === 'essays') return yearData.essayImages || null;
+    return null;
   } catch (e) {
     return null;
   }
