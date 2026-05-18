@@ -39,20 +39,6 @@ export function shuffleQuestions(questions, max = null) {
   return shuffled;
 }
 
-export function getBeceImages(subject, year, type) {
-  try {
-    const data = BECE_QUESTIONS[subject];
-    if (!data) return null;
-    const yearData = data[year];
-    if (!yearData) return null;
-    if (type === 'objectives') return yearData.objectiveImages || null;
-    if (type === 'essays') return yearData.essayImages || null;
-    return null;
-  } catch (e) {
-    return null;
-  }
-}
-
 export function getBeceQuestions(subject, year, type) {
   try {
     const data = BECE_QUESTIONS[subject];
