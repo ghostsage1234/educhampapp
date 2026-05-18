@@ -8,7 +8,7 @@ export default function ClassScreen() {
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
   const primaryClasses = ['Primary 1','Primary 2','Primary 3','Primary 4','Primary 5','Primary 6'];
-  const jhsClasses = ['JHS 1','JHS 2','JHS 3'];
+  const jhsClasses = ['JHS 1','JHS 2'];
   const classes = level === 'JHS' ? jhsClasses : primaryClasses;
 
   useEffect(() => {

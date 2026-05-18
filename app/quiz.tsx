@@ -4,7 +4,6 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getQuestions, shuffleQuestions } from '../src/questionLoader';
 import { playCorrect, playWrong, playWin } from '../src/sounds';
-import { playCorrect, playWrong, playWin } from '../src/sounds';
 
 export default function QuizScreen() {
   const router = useRouter();
@@ -13,45 +12,37 @@ export default function QuizScreen() {
 
   const [current, setCurrent] = useState(0);
   const [score, setScore] = useState(0);
-  const [selected, setSelected] = useState<string | null>(null);
+  const [selected, setSelected] = useState(null);
   const [answered, setAnswered] = useState(false);
   const [streak, setStreak] = useState(0);
   const [timeLeft, setTimeLeft] = useState(30);
-  const [questions, setQuestions] = useState<any[]>([]);
+  const [questions, setQuestions] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [debugInfo, setDebugInfo] = useState('');
-  const timerRef = useRef<any>(null);
+  const timerRef = useRef(null);
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const progressAnim = useRef(new Animated.Value(0)).current;
 
-  const isAdvanced = level === 'JHS' || ['Primary 4','Primary 5','Primary 6'].includes(className as string);
+  const isAdvanced = level === 'JHS' || ['Primary 4','Primary 5','Primary 6'].includes(className);
   const timeLimit = isAdvanced ? 45 : 30;
 
   useEffect(() => {
-    const cn = className as string;
-    const sub = subject as string;
-    const exam = examType as string;
-    const raw = getQuestions(cn, sub, exam);
-    const info = `class:"${cn}" sub:"${sub}" exam:"${exam}" found:${raw ? raw.length : 0}`;
-    setDebugInfo(info);
+    const raw = getQuestions(className, subject, examType);
     if (raw && raw.length > 0) {
       setQuestions(shuffleQuestions(raw));
     } else {
-      setQuestions([
-        { q: `No questions found!\n${info}`, o: ["OK", "Back", "Try again", "Exit"], a: "OK", e: "Check selection." }
-      ]);
+      setQuestions([{ q: `No questions found for ${subject} - ${examType}`, o: ["OK","Back","Try again","Exit"], a: "OK", e: "Please check your selection." }]);
     }
     setLoading(false);
   }, []);
 
-  const goToResults = useCallback(async (finalScore: number, qs: any[]) => {
+  const goToResults = useCallback(async (finalScore, qs) => {
     clearInterval(timerRef.current);
     const pct = Math.round((finalScore / qs.length) * 100);
     try {
       const existing = await AsyncStorage.getItem('leaderboard');
       const board = existing ? JSON.parse(existing) : [];
       board.push({ name: playerName, class: className, subject, score: pct, date: new Date().toLocaleDateString(), examType });
-      board.sort((a: any, b: any) => b.score - a.score);
+      board.sort((a, b) => b.score - a.score);
       await AsyncStorage.setItem('leaderboard', JSON.stringify(board.slice(0, 50)));
     } catch (e) {}
     router.replace({ pathname: '/results', params: { ...params, score: finalScore, total: qs.length, percentage: pct } });
@@ -79,7 +70,7 @@ export default function QuizScreen() {
     return () => clearInterval(timerRef.current);
   }, [current, loading, questions]);
 
-  const handleAnswer = (option: string) => {
+  const handleAnswer = (option) => {
     if (answered) return;
     clearInterval(timerRef.current);
     setSelected(option);
@@ -104,7 +95,7 @@ export default function QuizScreen() {
   const q = questions[current];
   const timerColor = timeLeft > 10 ? '#7c3aed' : timeLeft > 5 ? '#f59e0b' : '#ef4444';
 
-  const getOptionStyle = (opt: string) => {
+  const getOptionStyle = (opt) => {
     if (!answered) return styles.option;
     if (opt === q.a) return [styles.option, styles.correct];
     if (opt === selected && opt !== q.a) return [styles.option, styles.wrong];
@@ -125,7 +116,7 @@ export default function QuizScreen() {
         <Animated.View style={{ opacity: fadeAnim }}>
           <Text style={styles.subject}>{subject} • {examType}</Text>
           <Text style={styles.question}>{q.q}</Text>
-          {q.o.map((opt: string, idx: number) => (
+          {q.o.map((opt, idx) => (
             <TouchableOpacity key={idx} style={getOptionStyle(opt)} onPress={() => handleAnswer(opt)} disabled={answered} activeOpacity={0.8}>
               <Text style={styles.optionText}>{opt}</Text>
               {answered && opt === q.a && <Text style={styles.tick}>✓</Text>}
