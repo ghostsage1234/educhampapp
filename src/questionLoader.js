@@ -6,7 +6,6 @@ import { P5_QUESTIONS } from './p5questions';
 import { P6_QUESTIONS } from './p6questions';
 import { JHS1_QUESTIONS } from './jhs1questions';
 import { JHS2_QUESTIONS } from './jhs2questions';
-import { BECE_QUESTIONS } from './beceQuestions';
 
 const ALL_QUESTIONS = {
   ...P1_QUESTIONS,
@@ -37,46 +36,4 @@ export function shuffleQuestions(questions, max = null) {
   const shuffled = [...questions].sort(() => Math.random() - 0.5);
   if (max) return shuffled.slice(0, Math.min(max, shuffled.length));
   return shuffled;
-}
-
-export function getBeceAnswers(subject, year, type) {
-  try {
-    const data = BECE_QUESTIONS[subject];
-    if (!data) return null;
-    const yearData = data[year];
-    if (!yearData) return null;
-    if (type === 'objectives') return yearData.objectiveAnswers || null;
-    if (type === 'essays') return yearData.essayAnswers || null;
-    return null;
-  } catch (e) {
-    return null;
-  }
-}
-
-export function getBeceImages(subject, year, type) {
-  try {
-    const data = BECE_QUESTIONS[subject];
-    if (!data) return null;
-    const yearData = data[year];
-    if (!yearData) return null;
-    if (type === 'objectives') return yearData.objectiveImages || null;
-    if (type === 'essays') return yearData.essayImages || null;
-    return null;
-  } catch (e) {
-    return null;
-  }
-}
-
-export function getBeceQuestions(subject, year, type) {
-  try {
-    const data = BECE_QUESTIONS[subject];
-    if (!data) return null;
-    const yearData = data[year];
-    if (!yearData) return null;
-    if (type === 'objectives') return yearData.objectives || null;
-    if (type === 'essays') return yearData.essays || null;
-    return null;
-  } catch (e) {
-    return null;
-  }
 }

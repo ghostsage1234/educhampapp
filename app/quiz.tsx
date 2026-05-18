@@ -3,6 +3,7 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useEffect, useRef, useState, useCallback } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getQuestions, shuffleQuestions } from '../src/questionLoader';
+import { playCorrect, playWrong, playWin } from '../src/sounds';
 
 export default function QuizScreen() {
   const router = useRouter();
@@ -88,7 +89,7 @@ export default function QuizScreen() {
     const newStreak = correct ? streak + 1 : 0;
     setScore(newScore);
     setStreak(newStreak);
-    // Player presses Next button to continue
+    if (correct) { playCorrect(); } else { playWrong(); }
   };
 
   if (loading) {
@@ -136,6 +137,7 @@ export default function QuizScreen() {
               style={styles.nextBtn}
               onPress={() => {
                 if (current + 1 >= questions.length) {
+                  playWin();
                   goToResults(score, questions);
                 } else {
                   setCurrent(current + 1);

@@ -25,20 +25,16 @@ export default function ClassScreen() {
           {classes.map((cls) => (
             <TouchableOpacity
               key={cls}
-              style={[styles.card, cls === 'JHS 3' && styles.beceCard]}
+              style={styles.card}
               onPress={() => {
-                if (cls === 'JHS 3') {
-                  router.push({ pathname: '/becesubject', params: { level, className: cls } });
-                } else {
-                  router.push({ pathname: '/subject', params: { level, className: cls } });
-                }
+                router.push({ pathname: '/subject', params: { level, className: cls } });
               }}
               activeOpacity={0.8}
             >
-              <Text style={styles.cardEmoji}>{cls === 'JHS 3' ? '🎓' : '📖'}</Text>
+              <Text style={styles.cardEmoji}>📖</Text>
               <View style={{ flex: 1 }}>
                 <Text style={styles.cardTitle}>{cls}</Text>
-                {cls === 'JHS 3' && <Text style={styles.beceLabel}>BECE Preparation</Text>}
+
               </View>
               <Text style={styles.arrow}>›</Text>
             </TouchableOpacity>
