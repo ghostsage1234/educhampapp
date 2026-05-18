@@ -49,3 +49,17 @@ export function getBeceImages(subject, year) {
 export function getEssayQuestions(subject, year) {
   return null;
 }
+
+export function getBeceQuestions(subject, year, type) {
+  try {
+    const data = BECE_QUESTIONS[subject];
+    if (!data) return null;
+    const yearData = data[year];
+    if (!yearData) return null;
+    if (type === 'objectives') return yearData.objectives || null;
+    if (type === 'essays') return yearData.essays || null;
+    return null;
+  } catch (e) {
+    return null;
+  }
+}

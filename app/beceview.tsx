@@ -1,32 +1,22 @@
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Animated } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Image } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { getBeceQuestions } from '../src/questionLoader';
 
 export default function BeceViewScreen() {
   const router = useRouter();
-  const { subject, year, subjectColor } = useLocalSearchParams();
+  const { subject, year, subjectColor, type } = useLocalSearchParams();
   const color = (subjectColor as string) || '#ffd700';
-  const [revealedAnswers, setRevealedAnswers] = useState<Record<number, boolean>>({});
+  const [revealedAnswers, setRevealedAnswers] = useState<{[key:number]: boolean}>({});
   const [showAll, setShowAll] = useState(false);
 
-  const questions = getBeceQuestions(subject as string, year as string);
+  const questions = getBeceQuestions(subject as string, year as string, type as string);
 
   const toggleAnswer = (idx: number) => {
     setRevealedAnswers(prev => ({ ...prev, [idx]: !prev[idx] }));
   };
 
-  const toggleAll = () => {
-    if (showAll) {
-      setRevealedAnswers({});
-      setShowAll(false);
-    } else {
-      const all: Record<number, boolean> = {};
-      questions?.forEach((_: any, i: number) => { all[i] = true; });
-      setRevealedAnswers(all);
-      setShowAll(true);
-    }
-  };
+  const isObjectives = type === 'objectives';
 
   return (
     <View style={styles.container}>
@@ -34,71 +24,124 @@ export default function BeceViewScreen() {
         <TouchableOpacity onPress={() => router.back()}>
           <Text style={styles.back}>← Back</Text>
         </TouchableOpacity>
-        <View style={styles.headerCenter}>
-          <Text style={styles.headerTitle}>{subject}</Text>
-          <Text style={[styles.headerYear, { color }]}>BECE {year}</Text>
-        </View>
-        <TouchableOpacity onPress={toggleAll} style={[styles.toggleBtn, { borderColor: color }]}>
-          <Text style={[styles.toggleText, { color }]}>{showAll ? 'Hide All' : 'Show All'}</Text>
-        </TouchableOpacity>
+        <Text style={styles.headerTitle}>{subject}</Text>
+        <Text style={[styles.headerYear, { color }]}>BECE {year}</Text>
       </View>
 
-      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <View style={styles.infoBox}>
-          <Text style={styles.infoText}>📖 Tap each question to reveal the answer. Study at your own pace — no timer!</Text>
+      <ScrollView contentContainerStyle={styles.content}>
+        <View style={styles.titleBox}>
+          <Text style={styles.titleEmoji}>{isObjectives ? '✅' : '📝'}</Text>
+          <Text style={styles.title}>{isObjectives ? 'Objectives' : 'Essay Questions'}</Text>
+          <Text style={[styles.subtitle, { color }]}>BECE {year} • {subject}</Text>
+          <View style={styles.noticeBox}>
+            <Text style={styles.noticeText}>
+              {isObjectives
+                ? '📖 Read each question and tap "Show Answer" to reveal the correct answer and explanation.'
+                : '📖 Read each question carefully and write your answers in your exercise book.'}
+            </Text>
+          </View>
+          {isObjectives && (
+            <TouchableOpacity
+              style={styles.showAllBtn}
+              onPress={() => setShowAll(!showAll)}
+            >
+              <Text style={styles.showAllText}>
+                {showAll ? '🙈 Hide All Answers' : '👁️ Show All Answers'}
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
 
         {!questions || questions.length === 0 ? (
           <View style={styles.empty}>
             <Text style={styles.emptyEmoji}>📭</Text>
-            <Text style={styles.emptyTitle}>Coming Soon!</Text>
-            <Text style={styles.emptyText}>{subject} BECE {year} questions will be added soon.</Text>
+            <Text style={styles.emptyText}>Questions for {subject} {year} coming soon!</Text>
           </View>
-        ) : (
+        ) : isObjectives ? (
           questions.map((q: any, idx: number) => (
-            <View key={idx} style={styles.questionCard}>
-              <View style={styles.questionHeader}>
-                <View style={[styles.numBadge, { backgroundColor: color + '33', borderColor: color }]}>
-                  <Text style={[styles.numText, { color }]}>{idx + 1}</Text>
+            <View key={idx} style={styles.questionBox}>
+              <Text style={[styles.questionNum, { color }]}>Question {idx + 1}</Text>
+              <Text style={styles.questionText}>{q.q}</Text>
+              {q.image && (
+                <View style={styles.imagePlaceholder}>
+                  <Text style={styles.imageText}>📊 [Diagram - See textbook]</Text>
                 </View>
-                <Text style={styles.questionText}>{q.q}</Text>
-              </View>
-
-              {q.o && (
-                <View style={styles.optionsBox}>
-                  {q.o.map((opt: string, oIdx: number) => (
-                    <View key={oIdx} style={[
-                      styles.option,
-                      revealedAnswers[idx] && opt === q.a && styles.correctOption
+              )}
+              <View style={styles.optionsBox}>
+                {q.o.map((opt: string, oIdx: number) => (
+                  <View key={oIdx} style={[
+                    styles.optionRow,
+                    (showAll || revealedAnswers[idx]) && opt === q.a && styles.correctOption
+                  ]}>
+                    <Text style={[
+                      styles.optionLabel,
+                      (showAll || revealedAnswers[idx]) && opt === q.a && styles.correctText
                     ]}>
-                      <Text style={[
-                        styles.optionText,
-                        revealedAnswers[idx] && opt === q.a && styles.correctText
-                      ]}>
-                        {String.fromCharCode(65 + oIdx)}. {opt}
-                        {revealedAnswers[idx] && opt === q.a && ' ✓'}
+                      {String.fromCharCode(65 + oIdx)}.
+                    </Text>
+                    <Text style={[
+                      styles.optionText,
+                      (showAll || revealedAnswers[idx]) && opt === q.a && styles.correctText
+                    ]}>
+                      {opt}
+                    </Text>
+                    {(showAll || revealedAnswers[idx]) && opt === q.a && (
+                      <Text style={styles.tick}>✓</Text>
+                    )}
+                  </View>
+                ))}
+              </View>
+              {(showAll || revealedAnswers[idx]) && q.e && (
+                <View style={styles.expBox}>
+                  <Text style={styles.expText}>💡 {q.e}</Text>
+                </View>
+              )}
+              {!showAll && (
+                <TouchableOpacity
+                  style={[styles.revealBtn, revealedAnswers[idx] && styles.hideBtn]}
+                  onPress={() => toggleAnswer(idx)}
+                >
+                  <Text style={styles.revealText}>
+                    {revealedAnswers[idx] ? '🙈 Hide Answer' : '👁️ Show Answer'}
+                  </Text>
+                </TouchableOpacity>
+              )}
+            </View>
+          ))
+        ) : (
+          questions.map((section: any, sIdx: number) => (
+            <View key={sIdx} style={styles.sectionBox}>
+              <Text style={[styles.sectionTitle, { color }]}>{section.section}</Text>
+              {section.instruction && (
+                <Text style={styles.instruction}>{section.instruction}</Text>
+              )}
+              {section.questions.map((q: any, qIdx: number) => (
+                <View key={qIdx} style={styles.questionBox}>
+                  <Text style={[styles.questionNum, { color }]}>
+                    Question {q.number} {q.marks && `[${q.marks}]`}
+                  </Text>
+                  <Text style={styles.questionText}>{q.question}</Text>
+                  {q.image && (
+                    <View style={styles.imagePlaceholder}>
+                      <Text style={styles.imageText}>📊 [Diagram - See textbook]</Text>
+                    </View>
+                  )}
+                  {q.parts && q.parts.map((part: any, pIdx: number) => (
+                    <View key={pIdx} style={styles.partBox}>
+                      <Text style={styles.partText}>
+                        ({part.label}) {part.text}
+                        {part.marks && <Text style={styles.marks}> [{part.marks}]</Text>}
                       </Text>
+                      {part.subparts && part.subparts.map((sub: any, ssIdx: number) => (
+                        <Text key={ssIdx} style={styles.subpartText}>
+                          {sub.label}. {sub.text}
+                          {sub.marks && <Text style={styles.marks}> [{sub.marks}]</Text>}
+                        </Text>
+                      ))}
                     </View>
                   ))}
                 </View>
-              )}
-
-              <TouchableOpacity
-                style={[styles.answerBtn, { borderColor: color }]}
-                onPress={() => toggleAnswer(idx)}
-                activeOpacity={0.8}
-              >
-                <Text style={[styles.answerBtnText, { color }]}>
-                  {revealedAnswers[idx] ? '🙈 Hide Answer' : '💡 Show Answer'}
-                </Text>
-              </TouchableOpacity>
-
-              {revealedAnswers[idx] && (
-                <View style={[styles.answerBox, { borderColor: color + '66' }]}>
-                  <Text style={[styles.answerLabel, { color }]}>✅ Answer: {q.a}</Text>
-                  {q.e && <Text style={styles.explanation}>💡 {q.e}</Text>}
-                </View>
-              )}
+              ))}
             </View>
           ))
         )}
@@ -112,31 +155,42 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#0a0820' },
   header: { paddingTop: 50, paddingHorizontal: 20, paddingBottom: 12, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   back: { color: '#a78bfa', fontSize: 16 },
-  headerCenter: { flex: 1, alignItems: 'center' },
-  headerTitle: { color: '#fff', fontSize: 15, fontWeight: '800' },
-  headerYear: { fontSize: 13, fontWeight: '700' },
-  toggleBtn: { borderWidth: 1, borderRadius: 8, paddingHorizontal: 10, paddingVertical: 6 },
-  toggleText: { fontSize: 12, fontWeight: '700' },
-  content: { padding: 16 },
-  infoBox: { backgroundColor: 'rgba(255,215,0,0.08)', borderRadius: 12, padding: 12, marginBottom: 20, borderWidth: 1, borderColor: 'rgba(255,215,0,0.2)' },
-  infoText: { color: '#ffd700', fontSize: 13, textAlign: 'center', lineHeight: 20 },
-  empty: { alignItems: 'center', marginTop: 60 },
-  emptyEmoji: { fontSize: 64, marginBottom: 16 },
-  emptyTitle: { fontSize: 22, fontWeight: '800', color: '#fff', marginBottom: 8 },
-  emptyText: { color: '#a78bfa', fontSize: 15, textAlign: 'center' },
-  questionCard: { backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 16, padding: 16, marginBottom: 16, borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' },
-  questionHeader: { flexDirection: 'row', gap: 12, marginBottom: 12 },
-  numBadge: { width: 32, height: 32, borderRadius: 16, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
-  numText: { fontSize: 14, fontWeight: '900' },
-  questionText: { flex: 1, color: '#fff', fontSize: 15, lineHeight: 24, fontWeight: '600' },
-  optionsBox: { marginBottom: 12, gap: 6 },
-  option: { backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 8, padding: 10, borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' },
-  correctOption: { backgroundColor: 'rgba(16,185,129,0.15)', borderColor: '#10b981' },
-  optionText: { color: '#c4b5fd', fontSize: 14 },
+  headerTitle: { color: '#fff', fontSize: 16, fontWeight: '800', flex: 1, textAlign: 'center' },
+  headerYear: { fontSize: 14, fontWeight: '700' },
+  content: { padding: 20 },
+  titleBox: { alignItems: 'center', marginBottom: 24 },
+  titleEmoji: { fontSize: 48, marginBottom: 8 },
+  title: { fontSize: 26, fontWeight: '900', color: '#fff', marginBottom: 4 },
+  subtitle: { fontSize: 14, marginBottom: 12 },
+  noticeBox: { backgroundColor: 'rgba(255,215,0,0.1)', borderRadius: 12, padding: 12, borderWidth: 1, borderColor: 'rgba(255,215,0,0.3)', marginBottom: 12 },
+  noticeText: { color: '#ffd700', fontSize: 13, lineHeight: 20, textAlign: 'center' },
+  showAllBtn: { backgroundColor: 'rgba(124,58,237,0.3)', borderRadius: 10, paddingVertical: 10, paddingHorizontal: 20, borderWidth: 1, borderColor: '#7c3aed' },
+  showAllText: { color: '#fff', fontSize: 14, fontWeight: '700' },
+  questionBox: { backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 14, padding: 16, marginBottom: 14, borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' },
+  questionNum: { fontSize: 13, fontWeight: '800', marginBottom: 8 },
+  questionText: { color: '#fff', fontSize: 15, lineHeight: 24, marginBottom: 12 },
+  imagePlaceholder: { backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 8, padding: 16, alignItems: 'center', marginBottom: 12, borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)', borderStyle: 'dashed' },
+  imageText: { color: '#a78bfa', fontSize: 13 },
+  optionsBox: { marginBottom: 8 },
+  optionRow: { flexDirection: 'row', alignItems: 'center', padding: 10, borderRadius: 8, marginBottom: 6, backgroundColor: 'rgba(255,255,255,0.03)' },
+  correctOption: { backgroundColor: 'rgba(16,185,129,0.2)', borderWidth: 1, borderColor: '#10b981' },
+  optionLabel: { color: '#a78bfa', fontSize: 14, fontWeight: '700', marginRight: 8, width: 20 },
+  optionText: { color: '#e2e8f0', fontSize: 14, flex: 1 },
   correctText: { color: '#10b981', fontWeight: '700' },
-  answerBtn: { borderWidth: 1, borderRadius: 10, padding: 10, alignItems: 'center', marginBottom: 8 },
-  answerBtnText: { fontSize: 14, fontWeight: '700' },
-  answerBox: { backgroundColor: 'rgba(16,185,129,0.1)', borderRadius: 10, padding: 12, borderWidth: 1 },
-  answerLabel: { fontSize: 15, fontWeight: '800', marginBottom: 6 },
-  explanation: { color: '#c4b5fd', fontSize: 13, lineHeight: 20 },
+  tick: { color: '#10b981', fontSize: 16, fontWeight: '900' },
+  expBox: { backgroundColor: 'rgba(124,58,237,0.15)', borderRadius: 8, padding: 10, marginTop: 8, borderWidth: 1, borderColor: 'rgba(124,58,237,0.3)' },
+  expText: { color: '#c4b5fd', fontSize: 13, lineHeight: 20 },
+  revealBtn: { backgroundColor: 'rgba(124,58,237,0.3)', borderRadius: 10, paddingVertical: 10, alignItems: 'center', marginTop: 8, borderWidth: 1, borderColor: '#7c3aed' },
+  hideBtn: { backgroundColor: 'rgba(239,68,68,0.2)', borderColor: '#ef4444' },
+  revealText: { color: '#fff', fontSize: 14, fontWeight: '700' },
+  sectionBox: { marginBottom: 24 },
+  sectionTitle: { fontSize: 18, fontWeight: '900', marginBottom: 8 },
+  instruction: { color: '#c4b5fd', fontSize: 13, marginBottom: 12, fontStyle: 'italic' },
+  partBox: { marginLeft: 12, marginBottom: 8 },
+  partText: { color: '#e2e8f0', fontSize: 14, lineHeight: 22 },
+  marks: { color: '#a78bfa', fontSize: 13 },
+  subpartText: { color: '#cbd5e1', fontSize: 13, lineHeight: 20, marginLeft: 16, marginTop: 4 },
+  empty: { alignItems: 'center', marginTop: 60 },
+  emptyEmoji: { fontSize: 56, marginBottom: 16 },
+  emptyText: { color: '#a78bfa', fontSize: 16, textAlign: 'center' },
 });

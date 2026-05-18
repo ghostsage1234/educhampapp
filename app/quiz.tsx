@@ -88,13 +88,7 @@ export default function QuizScreen() {
     const newStreak = correct ? streak + 1 : 0;
     setScore(newScore);
     setStreak(newStreak);
-    setTimeout(() => {
-      if (current + 1 >= questions.length) {
-        goToResults(newScore, questions);
-      } else {
-        setCurrent(current + 1);
-      }
-    }, 1500);
+    // Player presses Next button to continue
   };
 
   if (loading) {
@@ -137,6 +131,22 @@ export default function QuizScreen() {
             </TouchableOpacity>
           ))}
           {answered && <View style={styles.expBox}><Text style={styles.expText}>💡 {q.e}</Text></View>}
+          {answered && (
+            <TouchableOpacity
+              style={styles.nextBtn}
+              onPress={() => {
+                if (current + 1 >= questions.length) {
+                  goToResults(score, questions);
+                } else {
+                  setCurrent(current + 1);
+                }
+              }}
+            >
+              <Text style={styles.nextText}>
+                {current + 1 >= questions.length ? '🏁 Finish Quiz' : 'Next Question →'}
+              </Text>
+            </TouchableOpacity>
+          )}
         </Animated.View>
       </ScrollView>
     </View>
@@ -163,4 +173,6 @@ const styles = StyleSheet.create({
   cross: { color: '#ef4444', fontSize: 18, fontWeight: '900' },
   expBox: { backgroundColor: 'rgba(124,58,237,0.2)', borderRadius: 12, padding: 14, marginTop: 8, borderWidth: 1, borderColor: '#7c3aed' },
   expText: { color: '#c4b5fd', fontSize: 14, lineHeight: 22 },
+  nextBtn: { backgroundColor: '#7c3aed', borderRadius: 14, paddingVertical: 16, alignItems: 'center', marginTop: 16 },
+  nextText: { color: '#fff', fontSize: 18, fontWeight: '800' },
 });
