@@ -1,7 +1,7 @@
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Image } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
-import { getBeceQuestions, getBeceImages } from '../src/questionLoader';
+import { getBeceQuestions, getBeceImages, getBeceAnswers } from '../src/questionLoader';
 
 export default function BeceViewScreen() {
   const router = useRouter();
@@ -12,6 +12,8 @@ export default function BeceViewScreen() {
 
   const questions = getBeceQuestions(subject as string, year as string, type as string);
   const images = getBeceImages(subject as string, year as string, type as string);
+  const answers = getBeceAnswers(subject as string, year as string, type as string);
+  const [showAnswers, setShowAnswers] = useState(false);
   const isObjectives = type === 'objectives';
 
   const toggleAnswer = (key: string) => {
@@ -45,6 +47,16 @@ export default function BeceViewScreen() {
             >
               <Text style={styles.showAllText}>
                 {showAll ? '🙈 Hide All Answers' : '👁️ Show All Answers'}
+              </Text>
+            </TouchableOpacity>
+          )}
+          {images && images.length > 0 && answers && (
+            <TouchableOpacity
+              style={styles.showAllBtn}
+              onPress={() => setShowAnswers(!showAnswers)}
+            >
+              <Text style={styles.showAllText}>
+                {showAnswers ? '🙈 Hide Answers' : '👁️ Show Answers'}
               </Text>
             </TouchableOpacity>
           )}
@@ -220,6 +232,15 @@ const styles = StyleSheet.create({
   subpartText: { color: '#cbd5e1', fontSize: 13, lineHeight: 20, marginLeft: 16, marginTop: 4 },
   empty: { alignItems: 'center', marginTop: 60 },
   imageContainer: { width: '100%' },
+  answersBox: { backgroundColor: 'rgba(16,185,129,0.1)', borderRadius: 14, padding: 16, marginBottom: 20, borderWidth: 1, borderColor: 'rgba(16,185,129,0.3)' },
+  answersTitle: { color: '#10b981', fontSize: 18, fontWeight: '900', marginBottom: 12, textAlign: 'center' },
+  answersGrid: { flexDirection: 'row', flexWrap: 'wrap' },
+  answerItem: { width: '20%', padding: 6, alignItems: 'center' },
+  answerNum: { color: '#a78bfa', fontSize: 11 },
+  answerLetter: { color: '#10b981', fontSize: 18, fontWeight: '900' },
+  essayAnswer: { marginBottom: 8, borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.1)', paddingBottom: 8 },
+  essayKey: { color: '#ffd700', fontSize: 13, fontWeight: '800' },
+  essayVal: { color: '#e2e8f0', fontSize: 13, lineHeight: 20 },
   paperImage: { width: '100%', height: undefined, aspectRatio: 0.65, marginBottom: 20, borderRadius: 8, borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' },
   emptyEmoji: { fontSize: 56, marginBottom: 16 },
   emptyText: { color: '#a78bfa', fontSize: 16, textAlign: 'center' },
