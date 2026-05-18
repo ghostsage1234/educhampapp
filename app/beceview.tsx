@@ -35,7 +35,7 @@ export default function BeceViewScreen() {
           <Text style={[styles.subtitle, { color }]}>BECE {year} • {subject}</Text>
           <View style={styles.noticeBox}>
             <Text style={styles.noticeText}>
-              📖 Read each question carefully and tap Show Answer to reveal the correct answer.
+              📖 View the question paper below and answer in your book.
             </Text>
           </View>
           <TouchableOpacity
@@ -218,7 +218,7 @@ const styles = StyleSheet.create({
   subpartText: { color: '#cbd5e1', fontSize: 13, lineHeight: 20, marginLeft: 16, marginTop: 4 },
   empty: { alignItems: 'center', marginTop: 60 },
   imageContainer: { width: '100%' },
-  paperImage: { width: '100%', height: 1000, marginBottom: 16 },
+  paperImage: { width: '100%', height: undefined, aspectRatio: 0.7, marginBottom: 16, borderRadius: 8 },
   emptyEmoji: { fontSize: 56, marginBottom: 16 },
   emptyText: { color: '#a78bfa', fontSize: 16, textAlign: 'center' },
 });
