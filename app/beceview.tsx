@@ -220,7 +220,7 @@ const styles = StyleSheet.create({
   subpartText: { color: '#cbd5e1', fontSize: 13, lineHeight: 20, marginLeft: 16, marginTop: 4 },
   empty: { alignItems: 'center', marginTop: 60 },
   imageContainer: { width: '100%' },
-  paperImage: { width: '100%', height: undefined, aspectRatio: 0.7, marginBottom: 16, borderRadius: 8 },
+  paperImage: { width: '100%', height: undefined, aspectRatio: 0.65, marginBottom: 20, borderRadius: 8, borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' },
   emptyEmoji: { fontSize: 56, marginBottom: 16 },
   emptyText: { color: '#a78bfa', fontSize: 16, textAlign: 'center' },
 });
