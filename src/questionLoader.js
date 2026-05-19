@@ -1,5 +1,5 @@
 import { P1_QUESTIONS } from './p1questions';
-import { P2_QUESTIONS_FULL } from './p2questions';
+import { P2_QUESTIONS } from './p2questions';
 import { P3_QUESTIONS } from './p3questions';
 import { P4_QUESTIONS } from './p4questions';
 import { P5_QUESTIONS } from './p5questions';
@@ -9,7 +9,7 @@ import { JHS2_QUESTIONS } from './jhs2questions';
 
 const ALL_QUESTIONS = {
   ...P1_QUESTIONS,
-  ...P2_QUESTIONS_FULL,
+  ...P2_QUESTIONS,
   ...P3_QUESTIONS,
   ...P4_QUESTIONS,
   ...P5_QUESTIONS,

@@ -1,26 +1,22 @@
 import { Audio } from 'expo-av';
 
-async function setupAudio() {
-  await Audio.setAudioModeAsync({
-    allowsRecordingIOS: false,
-    playsInSilentModeIOS: true,
-    shouldDuckAndroid: false,
-    playThroughEarpieceAndroid: false,
-  });
-}
+Audio.setAudioModeAsync({
+  allowsRecordingIOS: false,
+  playsInSilentModeIOS: true,
+  shouldDuckAndroid: false,
+  playThroughEarpieceAndroid: false,
+});
 
-async function playSound(file: any) {
+async function play(file: any) {
   try {
-    await setupAudio();
-    const { sound } = await Audio.Sound.createAsync(file);
-    await sound.playAsync();
-    sound.setOnPlaybackStatusUpdate((status) => {
-      if (status.isLoaded && status.didJustFinish) sound.unloadAsync();
+    const { sound } = await Audio.Sound.createAsync(file, { shouldPlay: true });
+    sound.setOnPlaybackStatusUpdate((s) => {
+      if (s.isLoaded && s.didJustFinish) sound.unloadAsync();
     });
-  } catch (e) {}
+  } catch {}
 }
 
-export const playCorrect = () => playSound(require('../assets/sounds/correct.mp3'));
-export const playWrong = () => playSound(require('../assets/sounds/wrong.mp3'));
-export const playClick = () => playSound(require('../assets/sounds/click.mp3'));
-export const playWin = () => playSound(require('../assets/sounds/correct.mp3'));
+export const playCorrect = () => play(require('../assets/sounds/correct.mp3'));
+export const playWrong = () => play(require('../assets/sounds/wrong.mp3'));
+export const playClick = () => play(require('../assets/sounds/click.mp3'));
+export const playWin = () => play(require('../assets/sounds/correct.mp3'));
