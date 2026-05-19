@@ -17,7 +17,11 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png",
         "backgroundColor": "#0a0820"
       },
-      "package": "com.educhampgh.app"
+      "package": "com.educhampgh.app",
+      "permissions": [
+        "android.permission.MODIFY_AUDIO_SETTINGS",
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "output": "static",
